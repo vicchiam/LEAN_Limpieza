@@ -1,0 +1,2 @@
+rootProject.name='LEAN_Limpieza'
+include ':app'

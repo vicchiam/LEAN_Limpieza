@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/layout_padding">
+
+    <EditText
+        android:id="@+id/app_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:inputType="text"
+        android:hint="Id del dispositivo" />
+
+    <Spinner
+        android:id="@+id/spinner_center"
+        style="@style/Widget.AppCompat.Spinner"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/dropdownListPreferredItemHeight"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/textline"
+        android:dropDownWidth="match_parent"
+        android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+        android:popupBackground="@android:color/white"
+        android:popupElevation="3dp"
+        android:stateListAnimator="@drawable/spinner_sla"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <EditText
+        android:id="@+id/edit_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:inputType="text"
+        android:hint="URL del servidor" />
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginTop="5dp"
+        android:padding="10dp"
+        android:textColor="@android:color/white"
+        android:id="@+id/btn_settings"
+        android:text="Guardar"
+        style="@style/Widget.MaterialComponents.Button"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"/>
+
+
+
+</LinearLayout>

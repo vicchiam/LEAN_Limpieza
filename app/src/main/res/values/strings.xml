@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">LEAN Limpieza</string>
+
+    <string name="default_url">http://172.16.0.173/Apps/lean/logistica/android/router.php</string>
+
+
+</resources>
