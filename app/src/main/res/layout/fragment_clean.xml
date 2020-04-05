@@ -19,10 +19,12 @@
             android:layout_height="wrap_content"
             android:inputType="date"
             android:textColor="@color/colorPrimaryText"
-            android:drawableRight="@drawable/ic_today"
+            android:drawableEnd="@drawable/ic_today"
             android:padding="16dp"
             android:background="@color/colorWhiteText"
-            android:enabled="true"/>
+            android:enabled="true"
+            android:autofillHints=""
+            android:labelFor="@id/search_date"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_download"
@@ -38,7 +40,7 @@
         android:id="@+id/fab_download"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
+        android:layout_gravity="bottom|end"
         android:layout_margin="15dp"
         app:srcCompat="@drawable/ic_add"/>
 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?listPreferredItemHeight"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="@android:color/white"
+    android:layout_marginBottom="1dp"
+    android:padding="@dimen/item_padding"
+    android:foreground="?selectableItemBackground"
+    android:id="@+id/item_download">
+
+    <TextView
+        android:id="@+id/item_clean_conf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="16sp"
+        android:text="12345 - Adinas tremens currelens" />
+
+    <TextView
+        android:id="@+id/item_clean_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/item_clean_conf"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/colorAccent"
+        android:text="10/10/2019 10:25" />
+
+    <TextView
+        android:id="@+id/item_clean_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/item_clean_conf"
+        android:layout_toEndOf="@id/item_clean_start"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/colorAccent"
+        android:text="No finalizado" />
+
+    <TextView
+        android:id="@+id/item_clean_operators"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/item_clean_conf"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="5dp"
+        android:text="Operarios: 1" />
+
+</RelativeLayout>

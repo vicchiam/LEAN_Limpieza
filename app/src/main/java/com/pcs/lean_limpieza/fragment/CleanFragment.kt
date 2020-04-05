@@ -17,6 +17,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.JsonSyntaxException
 import com.pcs.lean_limpieza.MainActivity
 import com.pcs.lean_limpieza.R
+import com.pcs.lean_limpieza.adapter.CleanAdapter
+import com.pcs.lean_limpieza.models.Clean
+import com.pcs.lean_limpieza.tools.Prefs
+import com.pcs.lean_limpieza.tools.Router
 import com.pcs.lean_limpieza.tools.Utils
 import java.util.*
 
@@ -24,7 +28,7 @@ class CleanFragment: Fragment() {
 
     private lateinit var mainActivity: MainActivity
 
-    //private val adapter = DownloadAdapter()
+    private val adapter = CleanAdapter()
 
     private lateinit var recycler: RecyclerView
 
@@ -58,22 +62,21 @@ class CleanFragment: Fragment() {
         recycler.setHasFixedSize(true)
         recycler.layoutManager = LinearLayoutManager(context)
 
-        /*
-        adapter.downloadAdapter(this, mainActivity.listDownload)
+        adapter.cleanAdapter(this, mainActivity.listClean)
         recycler.adapter = adapter
 
-        if(mainActivity.listDownload.isEmpty()){
-            getDownloads()
+        if(mainActivity.listClean.isEmpty()){
+            getCleans()
         }
         else{
-            adapter.downloadAdapter(this, mainActivity.listDownload)
+            adapter.cleanAdapter(this, mainActivity.listClean)
             recycler.adapter = adapter
         }
 
         adapter.search(Utils.dateToString(currentDate)){}
 
         mainActivity.currentAdapter = adapter
-        */
+
         return view
     }
 
@@ -123,8 +126,7 @@ class CleanFragment: Fragment() {
         }
     }
 
-    /*
-    private fun getDownloads(){
+    private fun getCleans(){
         val prefs = Prefs(mainActivity)
         val url: String = prefs.settingsUrl
 
@@ -133,13 +135,13 @@ class CleanFragment: Fragment() {
             Router.get(
                 context = context!!,
                 url = url,
-                params = "action=get-downloads&id_device=${mainActivity.idApp}",
+                params = "action=get-cleans&id_device=${mainActivity.idApp}",
                 responseListener = { response ->
                     if(context!=null){
                         try {
-                            val list: List<Download> = Utils.fromJson(response)
-                            mainActivity.listDownload = list.toMutableList()
-                            adapter.downloadAdapter(this, mainActivity.listDownload)
+                            val list: List<Clean> = Utils.fromJson(response)
+                            mainActivity.listClean = list.toMutableList()
+                            adapter.cleanAdapter(this, mainActivity.listClean)
                             recycler.adapter = adapter
                             adapter.search(Utils.dateToString(currentDate)) {}
                         }
@@ -167,10 +169,9 @@ class CleanFragment: Fragment() {
         }
     }
 
-    fun editDownload(download: Download){
-        mainActivity.download = download
-        mainActivity.navigateToNewDownload()
+    fun editClean(clean: Clean){
+        mainActivity.clean = clean
+        mainActivity.navigateToNewClean()
     }
-    */
 
 }

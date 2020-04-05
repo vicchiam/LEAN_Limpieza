@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import com.pcs.lean_limpieza.fragment.CleanFragment
 import com.pcs.lean_limpieza.fragment.SettingsFragment
+import com.pcs.lean_limpieza.models.Clean
 import com.pcs.lean_limpieza.tools.Cache
 import com.pcs.lean_limpieza.tools.Prefs
 import com.pcs.lean_limpieza.tools.Utils
@@ -39,10 +40,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private lateinit var drawerLayout: DrawerLayout
 
-    /*
-    lateinit var download: Download
-    lateinit var listDownload: MutableList<Download>
-    */
+
+    lateinit var clean: Clean
+    lateinit var listClean: MutableList<Clean>
+
     lateinit var currentAdapter: Any
 
     var cache: Cache = Cache(flushInterval = 5)
@@ -61,10 +62,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         initView()
 
-        /*
-        listDownload = ArrayList()
-        */
-
+        listClean = ArrayList()
     }
 
     private fun createID(){
@@ -113,7 +111,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_clean -> {
-                //this.listDownload.clear()
+                this.listClean.clear()
                 navigateToClean()
             }
             R.id.nav_settings -> {
@@ -150,16 +148,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         else{
             this.altCurrentFragment = FRAGMENT_CLEAN_FORM
             //navigateToFragment(DownloadFormFragment(), R.id.fragment_container2)
-        }
-    }
-
-    fun navigateToNewUpload(){
-        if(!Utils.isDoubleFragment(this)){
-            //Solo se dispone de un fragmento
-        }
-        else{
-            this.altCurrentFragment = FRAGMENT_UPLOAD_FORM
-            //navigateToFragment(UploadFormFragment(), R.id.fragment_container2)
         }
     }
 
