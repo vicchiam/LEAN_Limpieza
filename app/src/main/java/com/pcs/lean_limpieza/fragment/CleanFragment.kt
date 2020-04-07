@@ -83,7 +83,7 @@ class CleanFragment: Fragment() {
     private fun makeFloatingActionButton(view: View){
         val actionButton: FloatingActionButton = view.findViewById(R.id.fab_download)
         actionButton.setOnClickListener {
-            //mainActivity.download = Download()
+            mainActivity.clean = Clean()
             mainActivity.navigateToNewClean()
         }
     }
@@ -113,7 +113,7 @@ class CleanFragment: Fragment() {
                 val aux: String=dayOfMonth.toString().padStart(2,'0')+"/"+(monthOfYear+1).toString().padStart(2,'0')+"/"+year.toString()
                 editText.setText(aux)
                 currentDate = Utils.stringToDate(aux)
-                //adapter.search(aux){}
+                adapter.search(aux){}
             }
         editText.onRightDrawableClicked {
             val cal = Calendar.getInstance()
@@ -129,13 +129,14 @@ class CleanFragment: Fragment() {
     private fun getCleans(){
         val prefs = Prefs(mainActivity)
         val url: String = prefs.settingsUrl
+        val center: Int = prefs.settingsCenter
 
         if(url.isNotEmpty()){
             dialog.show()
             Router.get(
                 context = context!!,
                 url = url,
-                params = "action=get-cleans&id_device=${mainActivity.idApp}",
+                params = "action=get-cleans&id_device=${mainActivity.idApp}&center=${center}",
                 responseListener = { response ->
                     if(context!=null){
                         try {
@@ -156,7 +157,7 @@ class CleanFragment: Fragment() {
                         }
                     }
                     else{
-                        Log.e("No Context","AAAAAAAAAAAA")
+                        Log.e("No Context","Context error")
                     }
                 },
                 errorListener = { err ->

@@ -12,6 +12,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
+import com.pcs.lean_limpieza.fragment.CleanFormFragment
 import com.pcs.lean_limpieza.fragment.CleanFragment
 import com.pcs.lean_limpieza.fragment.SettingsFragment
 import com.pcs.lean_limpieza.models.Clean
@@ -39,7 +40,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var altCurrentFragment: Int = EMPTY_FRAGMENT
 
     private lateinit var drawerLayout: DrawerLayout
-
 
     lateinit var clean: Clean
     lateinit var listClean: MutableList<Clean>
@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         else{
             this.altCurrentFragment = FRAGMENT_CLEAN_FORM
-            //navigateToFragment(DownloadFormFragment(), R.id.fragment_container2)
+            navigateToFragment(CleanFormFragment(), R.id.fragment_container2)
         }
     }
 

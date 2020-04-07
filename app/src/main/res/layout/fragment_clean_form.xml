@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/layout_padding">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="Configuración:" />
+
+        <EditText
+            android:id="@+id/edit_conf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:textColor="@color/colorPrimaryText"
+            android:drawableRight="@drawable/ic_search"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="Numero de operarios:" />
+
+        <EditText
+            android:id="@+id/edit_num_operators"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="30dp"
+            android:weightSum="2">
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="1dp"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                style="@style/Widget.MaterialComponents.Button"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+                android:id="@+id/btn_clean_start"
+                android:text="Iniciar"
+                android:layout_weight="1"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="1dp"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                style="@style/Widget.MaterialComponents.Button"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+                android:id="@+id/btn_clean_end"
+                android:text="Finalizar"
+                android:enabled="false"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
