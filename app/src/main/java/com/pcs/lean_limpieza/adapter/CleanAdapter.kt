@@ -22,8 +22,8 @@ class CleanAdapter: RecyclerView.Adapter<CleanAdapter.ViewHolder>(), Filterable 
 
     private var lastSearch: String? = ""
 
-    fun cleanAdapter(downloadFragment: CleanFragment, list: MutableList<Clean>){
-        this.cleanFragment = downloadFragment
+    fun cleanAdapter(cleanFragment: CleanFragment, list: MutableList<Clean>){
+        this.cleanFragment = cleanFragment
         this.originalList = list
         this.showList = ArrayList(list)
     }

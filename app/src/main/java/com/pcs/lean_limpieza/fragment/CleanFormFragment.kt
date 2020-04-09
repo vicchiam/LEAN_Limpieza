@@ -11,6 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
 import com.pcs.lean_limpieza.MainActivity
@@ -45,20 +46,21 @@ class CleanFormFragment: Fragment() {
 
         val readOnly: Boolean = (clean.start!=null)
 
-        makeEditTextConf(view, clean.conf, clean.confName, readOnly)
+        makeTextViewConf(view, clean.conf, clean.confName, readOnly)
         makeEditTextOperator(view, clean.operators, readOnly)
+        makeEditTextObs(view, clean.obs)
         makeButtons(view, clean.start, clean.end)
 
         return view
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun EditText.onRightDrawableClicked(onClicked: (view: EditText) -> Unit) {
+    private fun TextView.onRightDrawableClicked(onClicked: (view: TextView) -> Unit) {
         this.setOnTouchListener { v, event ->
             Utils.closeKeyboard(context, mainActivity)
 
             var hasConsumed = false
-            if (v is EditText && event.x >= v.width - v.totalPaddingRight) {
+            if (v is TextView && event.x >= v.width - v.totalPaddingRight) {
                 if (event.action == MotionEvent.ACTION_UP) {
                     onClicked(this)
                 }
@@ -68,28 +70,19 @@ class CleanFormFragment: Fragment() {
         }
     }
 
-    private fun makeEditTextConf(view: View, conf: String = "", confName: String ="", readOnly: Boolean){
-        val editText: EditText = view.findViewById(R.id.edit_conf)
-        editText.isEnabled = !readOnly
+    private fun makeTextViewConf(view: View, conf: String = "", confName: String ="", readOnly: Boolean){
+        val textView: TextView = view.findViewById(R.id.text_conf)
 
-        val text = "$conf - $confName"
-        editText.setText(text)
+        if(conf.isEmpty())
+            textView.text = ""
+        else
+            textView.text = "$conf - $confName"
 
-        editText.onRightDrawableClicked {
-            mainActivity.navigateToSelectProvider()
+        textView.onRightDrawableClicked {
+            if(!readOnly)
+                mainActivity.navigateToSelectConf()
         }
 
-        editText.addTextChangedListener(object : TextWatcher {
-
-            override fun afterTextChanged(s: Editable) {}
-
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                //mainActivity.download.provider = 0
-                //mainActivity.download.name = s.toString()
-            }
-        })
     }
 
     private fun makeEditTextOperator(view: View, num: Int, readOnly: Boolean){
@@ -106,6 +99,23 @@ class CleanFormFragment: Fragment() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if(s.toString().isNotEmpty())
                     mainActivity.clean.operators = s.toString().toInt()
+            }
+        })
+    }
+
+    private fun makeEditTextObs(view: View, obs: String){
+        val editText: EditText = view.findViewById(R.id.edit_obs)
+
+        editText.setText(obs)
+        editText.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable) {}
+
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if(s.toString().isNotEmpty())
+                    mainActivity.clean.obs = s.toString()
             }
         })
     }
@@ -138,12 +148,13 @@ class CleanFormFragment: Fragment() {
         val center: Int = prefs.settingsCenter
 
         val params = HashMap<String,String>()
-        params["action"]="add-download"
+        params["action"]="add-clean"
         params["center"]=center.toString()
         params["id_device"]=mainActivity.idApp.toString()
         params["conf"]=mainActivity.clean.conf
         params["name"]=mainActivity.clean.confName
         params["operators"]=mainActivity.clean.operators.toString()
+        params["obs"]=mainActivity.clean.obs
         params["start"]=Utils.dateToString(mainActivity.clean.start!!, "yyyy-MM-dd HH:mm:ss")
         if(mainActivity.clean.end!=null)
             params["end"]=Utils.dateToString(mainActivity.clean.end!!, "yyyy-MM-dd HH:mm:ss")
@@ -194,20 +205,23 @@ class CleanFormFragment: Fragment() {
     }
 
     private fun saveEnd(){
-        Log.d("POSITION",mainActivity.clean.position.toString())
-        Log.d("LENGTH", mainActivity.listClean.size.toString())
-        mainActivity.listClean[mainActivity.clean.position].end = Date()
+        mainActivity.clean.end = Date()
 
         val prefs = Prefs(mainActivity)
         val url: String = prefs.settingsUrl
 
+        val params = HashMap<String,String>()
+        params["action"]="end-clean"
+        params["id"]=mainActivity.clean.id.toString()
+        params["obs"]=mainActivity.clean.obs
+
         if(url.isNotEmpty()){
             val dialog = Utils.modalAlert(mainActivity, "Guardando")
             dialog.show()
-            Router.get(
+            Router.post(
                 context = context!!,
                 url = url,
-                params = "action=end-download&id=${mainActivity.clean.id}",
+                params = params,
                 responseListener = { response ->
                     if (context != null){
                         if (response=="ok")

@@ -142,7 +142,7 @@ class CleanFragment: Fragment() {
                         try {
                             val list: List<Clean> = Utils.fromJson(response)
                             mainActivity.listClean = list.toMutableList()
-                            adapter.cleanAdapter(this, mainActivity.listClean)
+                            adapter.cleanAdapter(this,  mainActivity.listClean)
                             recycler.adapter = adapter
                             adapter.search(Utils.dateToString(currentDate)) {}
                         }

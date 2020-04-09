@@ -8,10 +8,11 @@ data class Clean(
     @SerializedName("position") var position: Int = 0,
     @SerializedName("id") var id: Long = 0,
     @SerializedName("conf") var conf: String = "",
-    @SerializedName("confName") var confName: String = "",
+    @SerializedName("name") var confName: String = "",
     @SerializedName("operators") var operators: Int = 1,
     @SerializedName("start") var start: Date? = null,
-    @SerializedName("end") var end: Date? = null
+    @SerializedName("end") var end: Date? = null,
+    @SerializedName("obs") var obs: String = ""
 ){
     val pending: Boolean
         get() = (start!=null && end==null)

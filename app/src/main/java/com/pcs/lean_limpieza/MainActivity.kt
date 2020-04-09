@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import com.pcs.lean_limpieza.fragment.CleanFormFragment
 import com.pcs.lean_limpieza.fragment.CleanFragment
+import com.pcs.lean_limpieza.fragment.SelectConfFragment
 import com.pcs.lean_limpieza.fragment.SettingsFragment
 import com.pcs.lean_limpieza.models.Clean
 import com.pcs.lean_limpieza.tools.Cache
@@ -151,13 +152,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    fun navigateToSelectProvider(){
+    fun navigateToSelectConf(){
         if(!Utils.isDoubleFragment(this)){
 
         }
         else{
             this.altCurrentFragment =  FRAGMENT_SELECT_PROVIDER
-            //navigateToFragment(SelectProviderFragment(), R.id.fragment_container2)
+            navigateToFragment(SelectConfFragment(), R.id.fragment_container2)
         }
     }
 
