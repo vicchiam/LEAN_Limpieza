@@ -1,5 +1,6 @@
 package com.pcs.lean_limpieza.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
+import com.pcs.lean_limpieza.MainActivity
 import com.pcs.lean_limpieza.R
 import com.pcs.lean_limpieza.tools.Prefs
 import com.pcs.lean_limpieza.tools.Utils
@@ -17,11 +19,18 @@ import java.lang.Integer.parseInt
 
 class SettingsFragment : Fragment(){
 
+    private lateinit var mainActivity: MainActivity
+
     private lateinit var prefs : Prefs
 
     private lateinit var spinner: Spinner
     private lateinit var editId: EditText
     private lateinit var editUrl: EditText
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mainActivity = activity as MainActivity
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,6 +85,8 @@ class SettingsFragment : Fragment(){
             val url = editUrl.text.toString()
             prefs.settingsUrl = url
             Utils.alert(context!!, "Guardado correctamente")
+
+            mainActivity.listClean.clear()
         }
     }
 

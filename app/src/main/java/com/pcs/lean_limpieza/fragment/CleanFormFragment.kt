@@ -1,34 +1,43 @@
 package com.pcs.lean_limpieza.fragment
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
+import com.google.gson.JsonSyntaxException
 import com.pcs.lean_limpieza.MainActivity
 import com.pcs.lean_limpieza.R
 import com.pcs.lean_limpieza.adapter.CleanAdapter
 import com.pcs.lean_limpieza.models.Clean
+import com.pcs.lean_limpieza.models.Conf
+import com.pcs.lean_limpieza.models.Inc
+import com.pcs.lean_limpieza.models.IncApp
 import com.pcs.lean_limpieza.tools.Prefs
 import com.pcs.lean_limpieza.tools.Router
 import com.pcs.lean_limpieza.tools.Utils
 import java.util.*
+import kotlin.collections.ArrayList
 
 class CleanFormFragment: Fragment() {
 
     private lateinit var mainActivity: MainActivity
 
+    private lateinit var listView: ListView
+
     private lateinit var buttonStart : MaterialButton
     private lateinit var buttonEnd : MaterialButton
+
+    private lateinit var listIncs: List<Inc>
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -49,16 +58,64 @@ class CleanFormFragment: Fragment() {
         makeTextViewConf(view, clean.conf, clean.confName, readOnly)
         makeEditTextOperator(view, clean.operators, readOnly)
         makeEditTextObs(view, clean.obs)
+        makeIncs(view, clean.incApps ?: ArrayList(), readOnly)
         makeButtons(view, clean.start, clean.end)
 
+        if(mainActivity.cache.get("incs")==null){
+            getIncs()
+        }
+        else{
+            listIncs = mainActivity.cache.get("incs") as List<Inc>
+        }
+
         return view
+    }
+
+    private fun getIncs(){
+        val prefs = Prefs(mainActivity)
+        val url: String = prefs.settingsUrl
+
+        if(url.isNotEmpty()){
+            val dialog: AlertDialog = Utils.modalAlert(mainActivity)
+            dialog.show()
+            Router.get(
+                context = context!!,
+                url = url,
+                params = "action=get-incs",
+                responseListener = { response ->
+                    if(context!=null) {
+                        try{
+                            val list: List<Inc> = Utils.fromJson(response)
+                            mainActivity.cache.set("incs", list)
+                            listIncs = list
+                        }
+                        catch (ex: JsonSyntaxException){
+                            Utils.alert(context!!,"El formato de la respuesta no es correcto: $response")
+                        }
+                        catch (ex: Exception){
+                            Utils.alert(context!!,ex.toString())
+                        }
+                        finally {
+                            dialog.dismiss()
+                        }
+                    }
+                    else
+                        dialog.dismiss()
+                },
+                errorListener = { err ->
+                    if(context!=null){
+                        Utils.alert(context!!, err)
+                        dialog.dismiss()
+                    }
+                }
+            )
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun TextView.onRightDrawableClicked(onClicked: (view: TextView) -> Unit) {
         this.setOnTouchListener { v, event ->
             Utils.closeKeyboard(context, mainActivity)
-
             var hasConsumed = false
             if (v is TextView && event.x >= v.width - v.totalPaddingRight) {
                 if (event.action == MotionEvent.ACTION_UP) {
@@ -120,6 +177,63 @@ class CleanFormFragment: Fragment() {
         })
     }
 
+    private fun makeIncs(view: View, incApps: MutableList<IncApp>, buttonActive: Boolean){
+        val button: ImageButton = view.findViewById(R.id.inc_add)
+        button.isEnabled = buttonActive
+        if(!buttonActive)
+            button.setBackgroundColor(Color.LTGRAY)
+        button.setOnClickListener { _ ->
+
+            val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_inc_app, null)
+
+            val builder = AlertDialog.Builder(context)
+                .setView(dialogView)
+                .setTitle("Nueva Incidencia")
+                .setPositiveButton("Guardar"){ dialog, _ ->
+                    val spinner: Spinner = dialogView.findViewById(R.id.dialog_inc)
+                    val editText: EditText = dialogView.findViewById(R.id.dialog_minutes)
+
+                    if(!editText.text.isEmpty() && editText.text.toString().toIntOrNull()!=null ){
+                        val inc: Inc = listIncs.get(spinner.selectedItemPosition)
+                        val minutes: Int = editText.text.toString().toInt()
+                        addIncApp(inc, minutes)
+                        dialog.dismiss()
+                    }
+
+                }
+                .setNegativeButton("Cancelar"){ dialog, _ ->
+                    dialog.cancel()
+                }
+
+            var incs: MutableList<String> = ArrayList()
+            for( inc: Inc in listIncs){
+                incs.add(inc.name)
+            }
+            val spinner: Spinner = dialogView.findViewById(R.id.dialog_inc)
+            val adapter = ArrayAdapter(context!!,android.R.layout.simple_spinner_item, incs)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.adapter = adapter
+            builder.show()
+        }
+
+        listView = view.findViewById(R.id.incs)
+
+        updateListView(incApps)
+
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Advertencia")
+            builder.setMessage("¿Seguro que deseas eliminar la incidencia?")
+            builder.setPositiveButton("Eliminar"){ dialog, _ ->
+                deleteIncApp(position)
+            }
+            builder.setNegativeButton("Cancelar"){ dialog, _ ->
+                dialog.cancel()
+            }
+            builder.show()
+        }
+    }
+
     private fun makeButtons(view: View, start: Date?, end: Date?){
         buttonStart = view.findViewById(R.id.btn_clean_start)
         buttonEnd = view.findViewById(R.id.btn_clean_end)
@@ -138,6 +252,17 @@ class CleanFormFragment: Fragment() {
         buttonEnd.setOnClickListener {
             saveEnd()
         }
+    }
+
+    private fun updateListView(incApps: MutableList<IncApp>) {
+        val listItems: MutableList<String> = ArrayList()
+        for (incApp: IncApp in incApps) {
+            val text = "${incApp.name} / Minutos:${incApp.minutes}"
+            listItems.add(text)
+        }
+
+        val adapter = ArrayAdapter(context!!, android.R.layout.simple_list_item_1, listItems)
+        listView.adapter = adapter
     }
 
     private fun saveStart(){
@@ -250,6 +375,17 @@ class CleanFormFragment: Fragment() {
     private fun saveEndError(response: String){
         Utils.alert(context!!, "Error: $response")
         mainActivity.listClean[mainActivity.clean.position].end = null
+    }
+
+    private fun addIncApp(inc: Inc, minutes: Int){
+        val incApp = IncApp(0, inc.code, minutes, inc.name)
+        mainActivity.clean.incApps!!.add(incApp)
+        updateListView(mainActivity.clean.incApps!!)
+    }
+
+    private fun deleteIncApp(position: Int){
+        mainActivity.clean.incApps!!.removeAt(position)
+        updateListView(mainActivity.clean.incApps!!)
     }
 
 }

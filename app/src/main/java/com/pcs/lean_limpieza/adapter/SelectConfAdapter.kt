@@ -18,8 +18,8 @@ class SelectConfAdapter : RecyclerView.Adapter<SelectConfAdapter.ViewHolder>(), 
     private lateinit var originalList: List<Conf>
     private lateinit var showList: MutableList<Conf>
 
-    fun selectProviderAdapter(selectProviderFragment: SelectConfFragment, list: MutableList<Conf>){
-        this.selectConfFragment = selectProviderFragment
+    fun selectConfAdapter(selectConfFragment: SelectConfFragment, list: MutableList<Conf>){
+        this.selectConfFragment = selectConfFragment
         this.originalList = list
         this.showList = ArrayList(list)
     }

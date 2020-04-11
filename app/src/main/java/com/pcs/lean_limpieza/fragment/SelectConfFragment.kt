@@ -65,17 +65,17 @@ class SelectConfFragment : Fragment() {
         recycler.layoutManager = LinearLayoutManager(context)
 
         if(mainActivity.cache.get("confs")==null) {
-            getAvailablePurchaseOrders()
+            getConfs()
         }
         else {
-            adapter.selectProviderAdapter(this, (mainActivity.cache.get("confs") as MutableList<Conf>))
+            adapter.selectConfAdapter(this, (mainActivity.cache.get("confs") as MutableList<Conf>))
             recycler.adapter = adapter
         }
 
         return view
     }
 
-    private fun getAvailablePurchaseOrders(){
+    private fun getConfs(){
         val prefs = Prefs(mainActivity)
         val url: String = prefs.settingsUrl
         val center: Int = prefs.settingsCenter
@@ -95,7 +95,7 @@ class SelectConfFragment : Fragment() {
                             val list: List<Conf> = Utils.fromJson(response)
                             val mutableList = list.toMutableList()
                             mainActivity.cache.set("confs", mutableList)
-                            adapter.selectProviderAdapter(this, mutableList)
+                            adapter.selectConfAdapter(this, mutableList)
                             recycler.adapter = adapter
                         }
                         catch (ex: JsonSyntaxException){

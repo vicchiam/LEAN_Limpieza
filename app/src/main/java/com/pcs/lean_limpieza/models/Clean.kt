@@ -12,7 +12,8 @@ data class Clean(
     @SerializedName("operators") var operators: Int = 1,
     @SerializedName("start") var start: Date? = null,
     @SerializedName("end") var end: Date? = null,
-    @SerializedName("obs") var obs: String = ""
+    @SerializedName("obs") var obs: String = "",
+    @SerializedName("incs") var incApps: MutableList<IncApp>? = null
 ){
     val pending: Boolean
         get() = (start!=null && end==null)
