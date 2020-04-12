@@ -196,7 +196,7 @@ class CleanFormFragment: Fragment() {
                     if(!editText.text.isEmpty() && editText.text.toString().toIntOrNull()!=null ){
                         val inc: Inc = listIncs.get(spinner.selectedItemPosition)
                         val minutes: Int = editText.text.toString().toInt()
-                        addIncApp(inc, minutes)
+                        saveIncApp(inc, minutes)
                         dialog.dismiss()
                     }
 
@@ -377,15 +377,89 @@ class CleanFormFragment: Fragment() {
         mainActivity.listClean[mainActivity.clean.position].end = null
     }
 
-    private fun addIncApp(inc: Inc, minutes: Int){
+    private fun saveIncApp(inc: Inc, minutes: Int){
         val incApp = IncApp(0, inc.code, minutes, inc.name)
-        mainActivity.clean.incApps!!.add(incApp)
-        updateListView(mainActivity.clean.incApps!!)
+
+        val prefs = Prefs(mainActivity)
+        val url: String = prefs.settingsUrl
+
+        val params = HashMap<String,String>()
+        params["action"]="add-inc-app"
+        params["id"]=mainActivity.clean.id.toString()
+        params["code"]=incApp.code
+        params["name"]=incApp.name
+        params["minutes"]=incApp.minutes.toString()
+
+        if(url.isNotEmpty()){
+            val dialog = Utils.modalAlert(mainActivity, "Guardando")
+            dialog.show()
+            Router.post(
+                context = context!!,
+                url = url,
+                params = params,
+                responseListener = { response ->
+                    if (context != null){
+                        if ( response.toIntOrNull()!=null ) {
+                            incApp.id = response.toLong()
+                            if(mainActivity.clean.incApps==null)
+                                mainActivity.clean.incApps = ArrayList()
+                            mainActivity.clean.incApps!!.add(incApp)
+                            updateListView(mainActivity.clean.incApps!!)
+                        }
+                        else
+                            Utils.alert(context!!, "Error: $response")
+                        dialog.dismiss()
+                    }
+                },
+                errorListener = { err ->
+                    if(context!=null){
+                        Utils.alert(context!!, err)
+                        dialog.dismiss()
+                    }
+                }
+            )
+        }
     }
 
     private fun deleteIncApp(position: Int){
-        mainActivity.clean.incApps!!.removeAt(position)
-        updateListView(mainActivity.clean.incApps!!)
+        val incApp: IncApp = mainActivity.clean.incApps!!.get(position)
+
+        val prefs = Prefs(mainActivity)
+        val url: String = prefs.settingsUrl
+
+        val params = HashMap<String,String>()
+        params["action"]="add-inc-app"
+        params["id"]=mainActivity.clean.id.toString()
+        params["code"]=incApp.code
+        params["name"]=incApp.name
+        params["minutes"]=incApp.minutes.toString()
+
+        if(url.isNotEmpty()){
+            val dialog = Utils.modalAlert(mainActivity, "Guardando")
+            dialog.show()
+            Router.get(
+                context = context!!,
+                url = url,
+                params = "action=delete-inc-app&id=${incApp.id}",
+                responseListener = { response ->
+                    if (context != null){
+                        if ( response=="ok" ) {
+                            mainActivity.clean.incApps!!.removeAt(position)
+                            updateListView(mainActivity.clean.incApps!!)
+                        }
+                        else
+                            Utils.alert(context!!, "Error: $response")
+                        dialog.dismiss()
+                    }
+                },
+                errorListener = { err ->
+                    if(context!=null){
+                        Utils.alert(context!!, err)
+                        dialog.dismiss()
+                    }
+                }
+            )
+        }
     }
 
 }
